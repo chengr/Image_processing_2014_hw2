@@ -17,7 +17,7 @@ float **first21;
 float **first22;
 
 //
-int mask33(int x,int y,int i);
+float mask33(int x,int y,int i);
 int mask_blur(int x,int y,int i);
 float mask_sobel(int x,int y,int i);
 int check(int x,int y,int i);
@@ -27,7 +27,7 @@ int main(int argc, char** argv)
 {
 	
 	/// Read the image 
-	src = imread("Koala.jpg", 1 );
+	src = imread("test3.jpg", 1 );
 	//img=src;
 	/// Show your results
 	namedWindow( "Orign", CV_WINDOW_AUTOSIZE );
@@ -38,16 +38,16 @@ int main(int argc, char** argv)
 
 	Mat img(row,col , CV_8UC3, Scalar(0,0,0));
 	//¦s¤G¶¥
-	int **second0;//BGR
-	int **second1;
-	int **second2;
-	second0 = new int *[col];
-	second1 = new int *[col];
-	second2 = new int *[col];
+	float **second0;//BGR
+	float **second1;
+	float **second2;
+	second0 = new float *[col];
+	second1 = new float *[col];
+	second2 = new float *[col];
 	for(int i=0;i<col;i++){
-		second0[i]=new int [row];
-		second1[i]=new int [row];
-		second2[i]=new int [row];
+		second0[i]=new float [row];
+		second1[i]=new float [row];
+		second2[i]=new float [row];
 	}
 	//¶]¤G¶¥
 	for(int i=0;i<col;i++)
@@ -95,38 +95,66 @@ int main(int argc, char** argv)
 			Vec3b color;
 			Vec3b cs=src.at<Vec3b>(Point(i,j));
 			if(j==300){
-			//cout<<"0:"<<second0[i][j]*abs(first20[i][j]/255)<<endl;
-			//cout<<"1:"<<second1[i][j]*abs(first21[i][j]/255)<<endl;
-			//cout<<"2:"<<second2[i][j]*abs(first22[i][j]/255)<<endl;
+			cout<<"0:"<<second0[i][j]<<endl;
+			//cout<<"1:"<<second1[i][j]<<endl;
+			//cout<<"2:"<<second2[i][j]<<endl;
 			}
 			/*
-			color[0]=cs[0]+(second0[i][j]*abs(first20[i][j]/255));
-			color[1]=cs[1]+(second1[i][j]*abs(first21[i][j]/255));
-			color[2]=cs[2]+(second2[i][j]*abs(first22[i][j]/255));
-			*/
-			
-			/*
-			color[0]=abs(first0[i][j]);
-			color[1]=abs(first1[i][j]);
-			color[2]=abs(first2[i][j]);
+			color[0]=cs[0]+(second0[i][j]*(first20[i][j]/255));
+			color[1]=cs[1]+(second1[i][j]*(first21[i][j]/255));
+			color[2]=cs[2]+(second2[i][j]*(first22[i][j]/255));
 			*/
 
-			
-			color[0]=second0[i][j]*abs(first20[i][j]/255);
-			color[1]=second1[i][j]*abs(first21[i][j]/255);
-			color[2]=second2[i][j]*abs(first22[i][j]/255);
-			
+			/*
+			color[0]=(first0[i][j]);
+			color[1]=(first1[i][j]);
+			color[2]=(first2[i][j]);
+			*/
 
 			/*
-			color[0]=abs(first20[i][j]);
-			color[1]=abs(first21[i][j]);
-			color[2]=abs(first22[i][j]);
+			color[0]=second0[i][j]*(first20[i][j]/255);
+			color[1]=second1[i][j]*(first21[i][j]/255);
+			color[2]=second2[i][j]*(first22[i][j]/255);
+			*/
+
+			/*
+			color[0]=(first20[i][j]);
+			color[1]=(first21[i][j]);
+			color[2]=(first22[i][j]);
+			*/
+
+			/*
+			if(color[0]>255)
+				color[0]=255;
+			if(color[1]>255)
+				color[1]=255;
+			if(color[2]>255)
+				color[2]=255;
+			if(color[0]<0)
+				color[0]=0;
+			if(color[1]<0)
+				color[1]=0;
+			if(color[2]<0)
+				color[2]=0;*/
+
+			
+			color[0]=second0[i][j];
+			color[1]=second1[i][j];
+			color[2]=second2[i][j];
+			
+			/*
+			color[0]=cs[0];
+			color[1]=cs[1];
+			color[2]=cs[2];
 			*/
 			img.at<Vec3b>(Point(i,j)) = color;
 		}
 	/// Show your results
 	namedWindow( "Result", CV_WINDOW_AUTOSIZE );
 	imshow( "Result", img );
+
+
+	imwrite( "detail_3.jpg", img );
 	//delete array
 	for (int i=0; i<col; i++){
 		delete [] second0[i];
@@ -155,7 +183,7 @@ int main(int argc, char** argv)
 	return 0;
 }
 //
-int mask33(int x,int y,int i){
+float mask33(int x,int y,int i){
 	int arr33[3][3]={{-1,-1,-1},
 					 {-1, 8,-1},
 					 {-1,-1,-1}};
@@ -169,7 +197,7 @@ int mask33(int x,int y,int i){
 	int d=check(x,y+1,i);
 	int rd=check(x+1,y+1,i);
 
-	int color_v=(arr33[0][0]*lu+arr33[0][1]*u+arr33[0][2]*ru+
+	float color_v=(arr33[0][0]*lu+arr33[0][1]*u+arr33[0][2]*ru+
 				 arr33[1][0]*l+arr33[1][1]*m+arr33[1][2]*r+
 				 arr33[2][0]*ld+arr33[2][1]*d+arr33[2][2]*rd
 	)/16;
@@ -194,16 +222,16 @@ float mask_sobel(int x,int y,int i){
 	int d=check(x,y+1,i);
 	int rd=check(x+1,y+1,i);
 
-	float color_v=(arr1[0][0]*lu+arr1[0][1]*u+arr1[0][2]*ru+
+	float color_v=abs(arr1[0][0]*lu+arr1[0][1]*u+arr1[0][2]*ru+
 				 arr1[1][0]*l+arr1[1][1]*m+arr1[1][2]*r+
 				 arr1[2][0]*ld+arr1[2][1]*d+arr1[2][2]*rd
 	)/8;
-	float color_v2=(arr2[0][0]*lu+arr2[0][1]*u+arr2[0][2]*ru+
+	float color_v2=abs(arr2[0][0]*lu+arr2[0][1]*u+arr2[0][2]*ru+
 				 arr2[1][0]*l+arr2[1][1]*m+arr2[1][2]*r+
 				 arr2[2][0]*ld+arr2[2][1]*d+arr2[2][2]*rd
 	)/8;
 
-	return color_v+color_v2;
+	return sqrt(color_v*color_v+color_v2*color_v2);
 }
 //
 int mask_blur(int x,int y,int i){
